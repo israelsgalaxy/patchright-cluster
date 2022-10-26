@@ -1,6 +1,6 @@
 {
   "name": "playwright-cluster",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "description": "Cluster management for playwright",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,7 +8,8 @@
     "build": "tsc",
     "test": "jest",
     "coverage": "jest --coverage",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "publish": "npm publsih --access public"
   },
   "author": "Thomas Dondorf, Christian Nikolov, Andrew Vlasyuk",
   "repository": {
