@@ -1,7 +1,7 @@
 import Job from './Job';
 import type Cluster from './Cluster';
 import type { TaskFunction } from './Cluster';
-import type { Page } from 'puppeteer';
+import type { Page } from 'playwright';
 import { timeoutExecute, debugGenerator, log } from './util';
 import { inspect } from 'util';
 import { WorkerInstance, JobInstance } from './concurrency/ConcurrencyImplementation';
@@ -78,7 +78,7 @@ export default class Worker<JobData, ReturnData> implements WorkerOptions {
 
         let errorState: Error | null = null;
 
-        page.on('error', (err) => {
+        page.on('pageerror', (err: any) => {
             errorState = err;
             log(`Error (page error) crawling ${inspect(job.data)} // message: ${err.message}`);
         });

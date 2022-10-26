@@ -1,8 +1,8 @@
 
-import { Page, LaunchOptions } from 'puppeteer';
+import { Page, LaunchOptions } from 'playwright';
 
 /**
- * ABSTRACT CLASS Needs to be implemented to manage one or more browsers via puppeteer instances
+ * ABSTRACT CLASS Needs to be implemented to manage one or more browsers via playwright instances
  *
  * The ConcurrencyImplementation creates WorkerInstances. Workers create JobInstances:
  * One WorkerInstance per maxWorkers, one JobInstance per job
@@ -10,15 +10,15 @@ import { Page, LaunchOptions } from 'puppeteer';
 export default abstract class ConcurrencyImplementation {
 
     protected options: LaunchOptions;
-    protected puppeteer: any;
+    protected playwright: any;
 
     /**
-     * @param options  Options that should be provided to puppeteer.launch
-     * @param puppeteer  puppeteer object (like puppeteer or puppeteer-core)
+     * @param options  Options that should be provided to playwright.launch
+     * @param playwright  playwright object (like playwright or playwright-core)
      */
-    public constructor(options: LaunchOptions, puppeteer: any) {
+    public constructor(options: LaunchOptions, playwright: any) {
         this.options = options;
-        this.puppeteer = puppeteer;
+        this.playwright = playwright;
     }
 
     /**
@@ -80,5 +80,5 @@ export interface ResourceData {
 
 export type ConcurrencyImplementationClassType = new (
     options: LaunchOptions,
-    puppeteer: any,
+    playwright: any,
 ) => ConcurrencyImplementation;

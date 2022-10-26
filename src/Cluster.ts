@@ -6,7 +6,7 @@ import Worker, { WorkResult } from './Worker';
 
 import * as builtInConcurrency from './concurrency/builtInConcurrency';
 
-import type { Page, PuppeteerNodeLaunchOptions } from 'puppeteer';
+import type { Page, LaunchOptions } from 'playwright';
 import Queue from './Queue';
 import SystemMonitor from './SystemMonitor';
 import { EventEmitter } from 'events';
@@ -19,15 +19,15 @@ interface ClusterOptions {
     concurrency: number | ConcurrencyImplementationClassType;
     maxConcurrency: number;
     workerCreationDelay: number;
-    puppeteerOptions: PuppeteerNodeLaunchOptions;
-    perBrowserOptions: PuppeteerNodeLaunchOptions[] | undefined;
+    playwrightOptions: LaunchOptions;
+    perBrowserOptions: LaunchOptions[] | undefined;
     monitor: boolean;
     timeout: number;
     retryLimit: number;
     retryDelay: number;
     skipDuplicateUrls: boolean;
     sameDomainDelay: number;
-    puppeteer: any;
+    playwright: any;
 }
 
 type Partial<T> = {
@@ -40,7 +40,7 @@ const DEFAULT_OPTIONS: ClusterOptions = {
     concurrency: 2, // CONTEXT
     maxConcurrency: 1,
     workerCreationDelay: 0,
-    puppeteerOptions: {
+    playwrightOptions: {
         // headless: false, // just for testing...
     },
     perBrowserOptions: undefined,
@@ -50,7 +50,7 @@ const DEFAULT_OPTIONS: ClusterOptions = {
     retryDelay: 0,
     skipDuplicateUrls: false,
     sameDomainDelay: 0,
-    puppeteer: undefined,
+    playwright: undefined,
 };
 
 interface TaskFunctionArguments<JobData> {
@@ -76,7 +76,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
     static CONCURRENCY_BROWSER = 3; // no cookie sharing and individual processes (uses contexts)
 
     private options: ClusterOptions;
-    private perBrowserOptions: PuppeteerNodeLaunchOptions[] | null = null;
+    private perBrowserOptions: LaunchOptions[] | null = null;
     private workers: Worker<JobData, ReturnData>[] = [];
     private workersAvail: Worker<JobData, ReturnData>[] = [];
     private workersBusy: Worker<JobData, ReturnData>[] = [];
@@ -130,23 +130,23 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
     }
 
     private async init() {
-        const browserOptions = this.options.puppeteerOptions;
-        let puppeteer = this.options.puppeteer;
+        const browserOptions = this.options.playwrightOptions;
+        let playwright = this.options.playwright;
 
-        if (this.options.puppeteer == null) { // check for null or undefined
-            puppeteer = require('puppeteer');
+        if (this.options.playwright == null) { // check for null or undefined
+            playwright = require('playwright');
         } else {
-            debug('Using provided (custom) puppteer object.');
+            debug('Using provided (custom) playwright object.');
         }
 
         if (this.options.concurrency === Cluster.CONCURRENCY_PAGE) {
-            this.browser = new builtInConcurrency.Page(browserOptions, puppeteer);
+            this.browser = new builtInConcurrency.Page(browserOptions, playwright);
         } else if (this.options.concurrency === Cluster.CONCURRENCY_CONTEXT) {
-            this.browser = new builtInConcurrency.Context(browserOptions, puppeteer);
+            this.browser = new builtInConcurrency.Context(browserOptions, playwright);
         } else if (this.options.concurrency === Cluster.CONCURRENCY_BROWSER) {
-            this.browser = new builtInConcurrency.Browser(browserOptions, puppeteer);
+            this.browser = new builtInConcurrency.Browser(browserOptions, playwright);
         } else if (typeof this.options.concurrency === 'function') {
-            this.browser = new this.options.concurrency(browserOptions, puppeteer);
+            this.browser = new this.options.concurrency(browserOptions, playwright);
         } else {
             throw new Error(`Unknown concurrency option: ${this.options.concurrency}`);
         }

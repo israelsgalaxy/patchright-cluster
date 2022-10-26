@@ -1,5 +1,5 @@
 
-import * as puppeteer from 'puppeteer';
+import * as playwright from 'playwright';
 
 import { debugGenerator, timeoutExecute } from '../../util';
 import ConcurrencyImplementation, { WorkerInstance } from '../ConcurrencyImplementation';
@@ -11,18 +11,18 @@ export default class Browser extends ConcurrencyImplementation {
     public async init() {}
     public async close() {}
 
-    public async workerInstance(perBrowserOptions: puppeteer.LaunchOptions | undefined):
+    public async workerInstance(perBrowserOptions: playwright.LaunchOptions | undefined):
         Promise<WorkerInstance> {
 
         const options = perBrowserOptions || this.options;
-        let chrome = await this.puppeteer.launch(options) as puppeteer.Browser;
-        let page: puppeteer.Page;
-        let context: any; // puppeteer typings are old...
+        let firefox = await this.playwright.firefox.launch(options) as playwright.Browser;
+        let page: playwright.Page;
+        let context: any; 
 
         return {
             jobInstance: async () => {
                 await timeoutExecute(BROWSER_TIMEOUT, (async () => {
-                    context = await chrome.createIncognitoBrowserContext();
+                    context = await firefox.newContext();
                     page = await context.newPage();
                 })());
 
@@ -38,18 +38,18 @@ export default class Browser extends ConcurrencyImplementation {
             },
 
             close: async () => {
-                await chrome.close();
+                await firefox.close();
             },
 
             repair: async () => {
                 debug('Starting repair');
                 try {
                     // will probably fail, but just in case the repair was not necessary
-                    await chrome.close();
+                    await firefox.close();
                 } catch (e) {}
 
                 // just relaunch as there is only one page per browser
-                chrome = await this.puppeteer.launch(options);
+                firefox = await this.playwright.firefox.launch(options);
             },
         };
     }

@@ -1,5 +1,5 @@
 
-import * as puppeteer from 'puppeteer';
+import * as playwright from 'playwright';
 import ConcurrencyImplementation, { ResourceData } from './ConcurrencyImplementation';
 
 import { debugGenerator, timeoutExecute } from '../util';
@@ -9,15 +9,15 @@ const BROWSER_TIMEOUT = 5000;
 
 export default abstract class SingleBrowserImplementation extends ConcurrencyImplementation {
 
-    protected browser: puppeteer.Browser | null = null;
+    protected browser: playwright.Browser | null = null;
 
     private repairing: boolean = false;
     private repairRequested: boolean = false;
     private openInstances: number = 0;
     private waitingForRepairResolvers: (() => void)[] = [];
 
-    public constructor(options: puppeteer.LaunchOptions, puppeteer: any) {
-        super(options, puppeteer);
+    public constructor(options: playwright.LaunchOptions, playwright: any) {
+        super(options, playwright);
     }
 
     private async repair() {
@@ -32,13 +32,13 @@ export default abstract class SingleBrowserImplementation extends ConcurrencyImp
 
         try {
             // will probably fail, but just in case the repair was not necessary
-            await (<puppeteer.Browser>this.browser).close();
+            await (<playwright.Browser>this.browser).close();
         } catch (e) {
             debug('Unable to close browser.');
         }
 
         try {
-            this.browser = await this.puppeteer.launch(this.options) as puppeteer.Browser;
+            this.browser = await this.playwright.firefox.launch(this.options) as playwright.Browser;
         } catch (err) {
             throw new Error('Unable to restart chrome.');
         }
@@ -49,11 +49,11 @@ export default abstract class SingleBrowserImplementation extends ConcurrencyImp
     }
 
     public async init() {
-        this.browser = await this.puppeteer.launch(this.options);
+        this.browser = await this.playwright.firefox.launch(this.options);
     }
 
     public async close() {
-        await (this.browser as puppeteer.Browser).close();
+        await (this.browser as playwright.Browser).close();
     }
 
     protected abstract createResources(): Promise<ResourceData>;

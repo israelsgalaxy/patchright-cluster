@@ -1,5 +1,5 @@
 
-import * as puppeteer from 'puppeteer';
+import * as playwright from 'playwright';
 
 import { ResourceData } from '../ConcurrencyImplementation';
 import SingleBrowserImplementation from '../SingleBrowserImplementation';
@@ -7,8 +7,8 @@ import SingleBrowserImplementation from '../SingleBrowserImplementation';
 export default class Context extends SingleBrowserImplementation {
 
     protected async createResources(): Promise<ResourceData> {
-        const context = await (this.browser as puppeteer.Browser)
-            .createIncognitoBrowserContext();
+        const context = await (this.browser as playwright.Browser)
+            .newContext();
         const page = await context.newPage();
         return {
             context,

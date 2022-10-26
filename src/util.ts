@@ -87,11 +87,11 @@ export async function timeoutExecute<T>(millis: number, promise: Promise<T>): Pr
 }
 
 export function debugGenerator(namespace: string): Debug.IDebugger {
-    const debug = Debug(`puppeteer-cluster: ${namespace}`);
+    const debug = Debug(`playwright-cluster: ${namespace}`);
     return debug;
 }
 
-const logToConsole = Debug('puppeteer-cluster:log');
+const logToConsole = Debug('playwright-cluster:log');
 logToConsole.log = console.error.bind(console);
 
 export function log(msg: string): void {

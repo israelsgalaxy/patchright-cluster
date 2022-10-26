@@ -1,7 +1,7 @@
 {
-  "name": "puppeteer-cluster",
+  "name": "playwright-cluster",
   "version": "0.23.0",
-  "description": "Cluster management for puppeteer",
+  "description": "Cluster management for playwright",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/thomasdondorf/puppeteer-cluster",
   "keywords": [
-    "puppeteer",
+    "playwright",
     "cluster",
     "pool"
   ],
@@ -26,7 +26,7 @@
     "debug": "^4.3.3"
   },
   "peerDependencies": {
-    "puppeteer": ">=1.5.0"
+    "playwright": ">=1.14.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",
@@ -35,8 +35,6 @@
     "coveralls": "^3.1.1",
     "express": "^4.17.2",
     "jest": "^27.4.7",
-    "puppeteer": "^13.1.1",
-    "puppeteer-core": "^13.1.1",
     "tree-kill": "^1.2.2",
     "ts-jest": "^27.1.3",
     "typescript": "^4.5.5"
