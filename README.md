@@ -1,13 +1,13 @@
-# Puppeteer Cluster
+# Playwright Cluster
 
-[![Build Status](https://github.com/thomasdondorf/puppeteer-cluster/actions/workflows/actions.yml/badge.svg)](https://github.com/thomasdondorf/puppeteer-cluster/actions/workflows/actions.yml)
-[![npm](https://img.shields.io/npm/v/puppeteer-cluster)](https://www.npmjs.com/package/puppeteer-cluster)
-[![npm download count](https://img.shields.io/npm/dm/puppeteer-cluster)](https://www.npmjs.com/package/puppeteer-cluster)
-[![Coverage Status](https://coveralls.io/repos/github/thomasdondorf/puppeteer-cluster/badge.svg?branch=master)](https://coveralls.io/github/thomasdondorf/puppeteer-cluster?branch=master)
-[![Known Vulnerabilities](https://snyk.io/test/github/thomasdondorf/puppeteer-cluster/badge.svg)](https://snyk.io/test/github/thomasdondorf/puppeteer-cluster)
-[![MIT License](https://img.shields.io/npm/l/puppeteer-cluster.svg)](#license)
+[![Build Status](https://github.com/cnikolov/playwright-cluster/actions/workflows/actions.yml/badge.svg)](https://github.com/cnikolov/playwright-cluster/actions/workflows/actions.yml)
+[![npm](https://img.shields.io/npm/v/playwright-cluster)](https://www.npmjs.com/package/playwright-cluster)
+[![npm download count](https://img.shields.io/npm/dm/playwright-cluster)](https://www.npmjs.com/package/playwright-cluster)
+[![Coverage Status](https://coveralls.io/repos/github/cnikolov/playwright-cluster/badge.svg?branch=master)](https://coveralls.io/github/cnikolov/playwright-cluster?branch=master)
+[![Known Vulnerabilities](https://snyk.io/test/github/cnikolov/playwright-cluster/badge.svg)](https://snyk.io/test/github/cnikolov/playwright-cluster)
+[![MIT License](https://img.shields.io/npm/l/playwright-cluster.svg)](#license)
 
-Create a cluster of puppeteer workers. This library spawns a pool of Chromium instances via [Puppeteer] and helps to keep track of jobs and errors. This is helpful if you want to crawl multiple pages or run tests in parallel. Puppeteer Cluster takes care of reusing Chromium and restarting the browser in case of errors.
+Create a cluster of playwright workers. This library spawns a pool of Chromium instances via [playwright] and helps to keep track of jobs and errors. This is helpful if you want to crawl multiple pages or run tests in parallel. playwright Cluster takes care of reusing Chromium and restarting the browser in case of errors.
 
 - [Installation](#installation)
 - [Usage](#usage)
@@ -20,12 +20,12 @@ Create a cluster of puppeteer workers. This library spawns a pool of Chromium in
 
 ###### What does this library do?
 
-* Handling of crawling errors
-* Auto restarts the browser in case of a crash
-* Can automatically retry if a job fails
-* Different concurrency models to choose from (pages, contexts, browsers)
-* Simple to use, small boilerplate
-* Progress view and monitoring statistics (see below)
+- Handling of crawling errors
+- Auto restarts the browser in case of a crash
+- Can automatically retry if a job fails
+- Different concurrency models to choose from (pages, contexts, browsers)
+- Simple to use, small boilerplate
+- Progress view and monitoring statistics (see below)
 
 <p align="center">
   <img src="https://i.imgur.com/koGNkBN.gif" height="250">
@@ -36,21 +36,22 @@ Create a cluster of puppeteer workers. This library spawns a pool of Chromium in
 Install using your favorite package manager:
 
 ```sh
-npm install --save puppeteer # in case you don't already have it installed 
-npm install --save puppeteer-cluster
+npm install --save playwright # in case you don't already have it installed 
+npm install --save playwright-cluster
 ```
 
 Alternatively, use `yarn`:
+
 ```sh
-yarn add puppeteer puppeteer-cluster
+yarn add playwright playwright-cluster
 ```
 
 ## Usage
 
-The following is a typical example of using puppeteer-cluster. A cluster is created with 2 concurrent workers. Then a task is defined which includes going to the URL and taking a screenshot. We then queue two jobs and wait for the cluster to finish.
+The following is a typical example of using playwright-cluster. A cluster is created with 2 concurrent workers. Then a task is defined which includes going to the URL and taking a screenshot. We then queue two jobs and wait for the cluster to finish.
 
 ```js
-const { Cluster } = require('puppeteer-cluster');
+const { Cluster } = require('playwright-cluster');
 
 (async () => {
   const cluster = await Cluster.launch({
@@ -74,16 +75,18 @@ const { Cluster } = require('puppeteer-cluster');
 ```
 
 ## Examples
-* [Simple example](examples/minimal.js)
-* [Wait for a task to be executed](examples/execute.js)
-* [Minimal screenshot server with express](examples/express-screenshot.js)
-* [Deep crawling the Google search results](examples/deep-google-crawler.js)
-* [Crawling the Alexa Top 1 Million](examples/alexa-1m.js)
-* [Queuing functions (simple)](examples/function-queuing-simple.js)
-* [Queuing functions (complex)](examples/function-queuing-complex.js)
-* [Error handling](examples/error-handling.js)
-* [Using a different puppeteer library (like puppeteer-core or puppeteer-firefox)](examples/different-puppeteer-library.js)
-* [Provide types for input/output with TypeScript generics](examples/typings.ts)
+
+- [Simple example](examples/minimal.js)
+
+- [Wait for a task to be executed](examples/execute.js)
+- [Minimal screenshot server with express](examples/express-screenshot.js)
+- [Deep crawling the Google search results](examples/deep-google-crawler.js)
+- [Crawling the Alexa Top 1 Million](examples/alexa-1m.js)
+- [Queuing functions (simple)](examples/function-queuing-simple.js)
+- [Queuing functions (complex)](examples/function-queuing-complex.js)
+- [Error handling](examples/error-handling.js)
+- [Using a different playwright library (like playwright-core or playwright-firefox)](examples/different-playwright-library.js)
+- [Provide types for input/output with TypeScript generics](examples/typings.ts)
 
 ## Concurrency implementations
 
@@ -92,7 +95,7 @@ There are different concurrency models, which define how isolated each job is ru
 | Concurrency | Description | Shared data |
 | --- | --- | --- |
 | `CONCURRENCY_PAGE` | One [Page] for each URL | Shares everything (cookies, localStorage, etc.) between jobs. |
-| `CONCURRENCY_CONTEXT` | Incognito page (see [IncognitoBrowserContext](https://github.com/GoogleChrome/puppeteer/blob/v1.5.0/docs/api.md#browsercreateincognitobrowsercontext)) for each URL  | No shared data. |
+| `CONCURRENCY_CONTEXT` | Incognito page (see [IncognitoBrowserContext](https://github.com/GoogleChrome/playwright/blob/v1.5.0/docs/api.md#browsercreateincognitobrowsercontext)) for each URL  | No shared data. |
 | `CONCURRENCY_BROWSER` | One browser (using an incognito page) per URL. If one browser instance crashes for any reason, this will not affect other jobs. | No shared data.  |
 | Custom concurrency (**experimental**) | You can create your own concurrency implementation. Copy one of the files of the `concurrency/built-in` directory and implement `ConcurrencyImplementation`. Then provide the class to the option `concurrency`. **This part of the library is currently experimental and might break in the future, even in a minor version upgrade while the version has not reached 1.0.** | Depends on your implementation |
 
@@ -115,33 +118,33 @@ To allow proper type checks with TypeScript you can provide generics. In case no
   const result = await cluster.execute('https://www.google.com');
 ```
 
-
 ## Debugging
 
-Try to checkout the [puppeteer debugging tips](https://github.com/GoogleChrome/puppeteer#debugging-tips) first. Your problem might not be related to `puppeteer-cluster`, but `puppteer` itself. Additionally, you can enable verbose logging to see which data is consumed by which worker and some other cluster information. Set the DEBUG environment variable to `puppeteer-cluster:*`. See an example below or checkout the [debug docs](https://github.com/visionmedia/debug#windows-command-prompt-notes) for more information.
+Try to checkout the [playwright debugging tips](https://github.com/GoogleChrome/playwright#debugging-tips) first. Your problem might not be related to `playwright-cluster`, but `puppteer` itself. Additionally, you can enable verbose logging to see which data is consumed by which worker and some other cluster information. Set the DEBUG environment variable to `playwright-cluster:*`. See an example below or checkout the [debug docs](https://github.com/visionmedia/debug#windows-command-prompt-notes) for more information.
 
 ```bash
 # Linux
-DEBUG='puppeteer-cluster:*' node examples/minimal
+DEBUG='playwright-cluster:*' node examples/minimal
 # Windows Powershell
-$env:DEBUG='puppeteer-cluster:*';node examples/minimal
+$env:DEBUG='playwright-cluster:*';node examples/minimal
 ```
 
 ## API
 
 - [class: Cluster](#class-cluster)
-  * [Cluster.launch(options)](#clusterlaunchoptions)
-  * [cluster.task(taskFunction)](#clustertasktaskfunction)
-  * [cluster.queue([data] [, taskFunction])](#clusterqueuedata--taskfunction)
-  * [cluster.execute([data] [, taskFunction])](#clusterexecutedata--taskfunction)
-  * [cluster.idle()](#clusteridle)
-  * [cluster.close()](#clusterclose)
+  - [Cluster.launch(options)](#clusterlaunchoptions)
+  - [cluster.task(taskFunction)](#clustertasktaskfunction)
+  - [cluster.queue([data] [, taskFunction])](#clusterqueuedata--taskfunction)
+  - [cluster.execute([data] [, taskFunction])](#clusterexecutedata--taskfunction)
+  - [cluster.idle()](#clusteridle)
+  - [cluster.close()](#clusterclose)
 
 ### class: Cluster
 
 Cluster module provides a method to launch a cluster of Chromium instances.
 
 #### event: 'taskerror'
+
 - <[Error]>
 - <[string]|[Object]>
 - <[boolean]>
@@ -160,17 +163,19 @@ In case the task was queued via [Cluster.execute] there will be no event fired.
 ```
 
 #### event: 'queue'
+
 - <\?[Object]>
 - <\?[function]>
 
 Emitted when a task is queued via [Cluster.queue] or [Cluster.execute]. The first argument is the object containing the data (if any data is provided). The second argument is the queued function (if any). In case only a function is provided via [Cluster.queue] or [Cluster.execute], the first argument will be undefined. If only data is provided, the second argument will be undefined.
 
 #### Cluster.launch(options)
+
 - `options` <[Object]> Set of configurable options for the cluster. Can have the following fields:
   - `concurrency` <*Cluster.CONCURRENCY_PAGE*|*Cluster.CONCURRENCY_CONTEXT*|*Cluster.CONCURRENCY_BROWSER*|ConcurrencyImplementation> The chosen concurrency model. See [Concurreny models](#concurreny-models) for more information. Defaults to `Cluster.CONCURRENCY_CONTEXT`. Alternatively you can provide a class implementing `ConcurrencyImplementation`.
   - `maxConcurrency` <[number]> Maximal number of parallel workers. Defaults to `1`.
-  - `puppeteerOptions` <[Object]> Object passed to [puppeteer.launch]. See puppeteer documentation for more information. Defaults to `{}`.
-  - `perBrowserOptions` <[Array]<[Object]>> Object passed to [puppeteer.launch] for each individual browser. If set, `puppeteerOptions` will be ignored. Defaults to `undefined` (meaning that `puppeteerOptions` will be used).
+  - `playwrightOptions` <[Object]> Object passed to [playwright.launch]. See playwright documentation for more information. Defaults to `{}`.
+  - `perBrowserOptions` <[Array]<[Object]>> Object passed to [playwright.launch] for each individual browser. If set, `playwrightOptions` will be ignored. Defaults to `undefined` (meaning that `playwrightOptions` will be used).
   - `retryLimit` <[number]> How often do you want to retry a job before marking it as failed. Ignored by tasks queued via [Cluster.execute]. Defaults to `0`.
   - `retryDelay` <[number]> How much time should pass at minimum between the job execution and its retry. Ignored by tasks queued via [Cluster.execute]. Defaults to `0`.
   - `sameDomainDelay` <[number]> How much time should pass at minimum between two requests to the same domain. If you use this field, the queued `data` must be your URL or `data` must be an object containing a field called `url`.
@@ -178,14 +183,15 @@ Emitted when a task is queued via [Cluster.queue] or [Cluster.execute]. The firs
   - `timeout` <[number]> Specify a timeout for all tasks. Defaults to `30000` (30 seconds).
   - `monitor` <[boolean]> If set to `true`, will provide a small command line output to provide information about the crawling process. Defaults to `false`.
   - `workerCreationDelay` <[number]> Time between creation of two workers. Set this to a value like `100` (0.1 seconds) in case you want some time to pass before another worker is created. You can use this to prevent a network peak right at the start. Defaults to `0` (no delay).
-  - `puppeteer` <[Object]> In case you want to use a different puppeteer library (like [puppeteer-core](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteer-vs-puppeteer-core) or [puppeteer-extra](https://github.com/berstend/puppeteer-extra)), pass the object here. If not set, will default to using puppeteer. When using `puppeteer-core`, make sure to also provide `puppeteerOptions.executablePath`.
+  - `playwright` <[Object]> In case you want to use a different playwright library (like [playwright-core](https://github.com/GoogleChrome/playwright/blob/master/docs/api.md#playwright-vs-playwright-core) or [playwright-extra](https://github.com/berstend/playwright-extra)), pass the object here. If not set, will default to using playwright. When using `playwright-core`, make sure to also provide `playwrightOptions.executablePath`.
 - returns: <[Promise]<[Cluster]>>
 
 The method launches a cluster instance.
 
 #### cluster.task(taskFunction)
+
 - `taskFunction` <[function]([string]|[Object], [Page], [Object])> Sets the function, which will be called for each job. The function will be called with an object having the following fields:
-  - `page` <[Page]> The page given by puppeteer, which provides methods to interact with a single tab in Chromium.
+  - `page` <[Page]> The page given by playwright, which provides methods to interact with a single tab in Chromium.
   - `data` <any> The data of the job you provided to [Cluster.queue].
   - `worker` <[Object]> An object containing information about the worker executing the current job.
     - `id` <[number]> ID of the worker. Worker IDs start at 0.
@@ -194,9 +200,10 @@ The method launches a cluster instance.
 Specifies a task for the cluster. A task is called for each job you queue via [Cluster.queue]. Alternatively you can directly queue the function that you want to be executed. See [Cluster.queue] for an example.
 
 #### cluster.queue([data] [, taskFunction])
+
 - `data` <any> Data to be queued. This might be your URL (a string) or a more complex object containing data. The data given will be provided to your task function(s). See [examples] for a more complex usage of this argument.
 - `taskFunction` <[function]> Function like the one given to [Cluster.task]. If a function is provided, this function will be called (only for this job) instead of the function provided to [Cluster.task]. The function will be called with an object having the following fields:
-  - `page` <[Page]> The page given by puppeteer, which provides methods to interact with a single tab in Chromium.
+  - `page` <[Page]> The page given by playwright, which provides methods to interact with a single tab in Chromium.
   - `data` <any> The data of the job you provided as first argument to [Cluster.queue]. This might be `undefined` in case you only specified a function.
   - `worker` <[Object]> An object containing information about the worker executing the current job.
     - `id` <[number]> ID of the worker. Worker IDs start at 0.
@@ -207,9 +214,10 @@ Puts a URL or data into the queue. Alternatively (or even additionally) you can 
 Be aware that this function only returns a Promise for backward compatibility reasons. This function does not run asynchronously and will immediately return.
 
 #### cluster.execute([data] [, taskFunction])
+
 - `data` <any> Data to be queued. This might be your URL (a string) or a more complex object containing data. The data given will be provided to your task function(s). See [examples] for a more complex usage of this argument.
 - `taskFunction` <[function]> Function like the one given to [Cluster.task]. If a function is provided, this function will be called (only for this job) instead of the function provided to [Cluster.task]. The function will be called with an object having the following fields:
-  - `page` <[Page]> The page given by puppeteer, which provides methods to interact with a single tab in Chromium.
+  - `page` <[Page]> The page given by playwright, which provides methods to interact with a single tab in Chromium.
   - `data` <any> The data of the job you provided as first argument to [Cluster.queue]. This might be `undefined` in case you only specified a function.
   - `worker` <[Object]> An object containing information about the worker executing the current job.
     - `id` <[number]> ID of the worker. Worker IDs start at 0.
@@ -218,11 +226,13 @@ Be aware that this function only returns a Promise for backward compatibility re
 Works like [Cluster.queue], but this function returns a Promise which will be resolved after the task is executed. That means, that the job is still queued, but the script will wait for it to be finished. In case an error happens during the execution, this function will reject the Promise with the thrown error. There will be no "taskerror" event fired. In addition, tasks queued via execute will ignore "retryLimit" and "retryDelay". For an example see the [Execute example](examples/execute.js).
 
 #### cluster.idle()
+
 - returns: <[Promise]>
 
 Promise is resolved when the queue becomes empty.
 
 #### cluster.close()
+
 - returns: <[Promise]>
 
 Closes the cluster and all opened Chromium instances including all open pages (if any were opened). It is recommended to run [Cluster.idle](#clusteridle) before calling this function. The [Cluster] object itself is considered to be disposed and cannot be used anymore.
@@ -231,16 +241,14 @@ Closes the cluster and all opened Chromium instances including all open pages (i
 
 [MIT license](./LICENSE).
 
-
-
 [Cluster.queue]: #clusterqueuedata--taskfunction "Cluster.queue"
 [Cluster.execute]: #clusterexecutedata--taskfunction "Cluster.execute"
 [Cluster.task]: #clustertasktaskfunction "Cluster.task"
 [Cluster]: #class-cluster "Cluster"
 
-[Puppeteer]: https://github.com/GoogleChrome/puppeteer "Puppeteer"
-[Page]: https://github.com/GoogleChrome/puppeteer/blob/v1.5.0/docs/api.md#class-page "Page"
-[puppeteer.launch]: https://github.com/GoogleChrome/puppeteer/blob/v1.5.0/docs/api.md#puppeteerlaunchoptions "puppeteer.launch"
+[playwright]: https://github.com/GoogleChrome/playwright "playwright"
+[Page]: https://github.com/GoogleChrome/playwright/blob/v1.5.0/docs/api.md#class-page "Page"
+[playwright.launch]: https://github.com/GoogleChrome/playwright/blob/v1.5.0/docs/api.md#playwrightlaunchoptions "playwright.launch"
 
 [function]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function "Function"
 [string]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type "String"
