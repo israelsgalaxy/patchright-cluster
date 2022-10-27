@@ -95,7 +95,7 @@ There are different concurrency models, which define how isolated each job is ru
 | Concurrency | Description | Shared data |
 | --- | --- | --- |
 | `CONCURRENCY_PAGE` | One [Page] for each URL | Shares everything (cookies, localStorage, etc.) between jobs. |
-| `CONCURRENCY_CONTEXT` | Incognito page (see [IncognitoBrowserContext](https://github.com/GoogleChrome/playwright/blob/v1.5.0/docs/api.md#browsercreateincognitobrowsercontext)) for each URL  | No shared data. |
+| `CONCURRENCY_CONTEXT` | Incognito page (see [IncognitoBrowserContext](https://playwright.dev/docs/api/class-browser#browser-new-context)) for each URL  | No shared data. |
 | `CONCURRENCY_BROWSER` | One browser (using an incognito page) per URL. If one browser instance crashes for any reason, this will not affect other jobs. | No shared data.  |
 | Custom concurrency (**experimental**) | You can create your own concurrency implementation. Copy one of the files of the `concurrency/built-in` directory and implement `ConcurrencyImplementation`. Then provide the class to the option `concurrency`. **This part of the library is currently experimental and might break in the future, even in a minor version upgrade while the version has not reached 1.0.** | Depends on your implementation |
 
@@ -120,7 +120,7 @@ To allow proper type checks with TypeScript you can provide generics. In case no
 
 ## Debugging
 
-Try to checkout the [playwright debugging tips](https://github.com/GoogleChrome/playwright#debugging-tips) first. Your problem might not be related to `playwright-cluster`, but `puppteer` itself. Additionally, you can enable verbose logging to see which data is consumed by which worker and some other cluster information. Set the DEBUG environment variable to `playwright-cluster:*`. See an example below or checkout the [debug docs](https://github.com/visionmedia/debug#windows-command-prompt-notes) for more information.
+Try to checkout the [playwright debugging tips](https://playwright.dev/docs/running-tests#debugging-tests) first. Your problem might not be related to `playwright-cluster`, but `puppteer` itself. Additionally, you can enable verbose logging to see which data is consumed by which worker and some other cluster information. Set the DEBUG environment variable to `playwright-cluster:*`. See an example below or checkout the [debug docs](https://github.com/visionmedia/debug#windows-command-prompt-notes) for more information.
 
 ```bash
 # Linux
@@ -183,7 +183,7 @@ Emitted when a task is queued via [Cluster.queue] or [Cluster.execute]. The firs
   - `timeout` <[number]> Specify a timeout for all tasks. Defaults to `30000` (30 seconds).
   - `monitor` <[boolean]> If set to `true`, will provide a small command line output to provide information about the crawling process. Defaults to `false`.
   - `workerCreationDelay` <[number]> Time between creation of two workers. Set this to a value like `100` (0.1 seconds) in case you want some time to pass before another worker is created. You can use this to prevent a network peak right at the start. Defaults to `0` (no delay).
-  - `playwright` <[Object]> In case you want to use a different playwright library (like [playwright-core](https://github.com/GoogleChrome/playwright/blob/master/docs/api.md#playwright-vs-playwright-core) or [playwright-extra](https://github.com/berstend/playwright-extra)), pass the object here. If not set, will default to using playwright. When using `playwright-core`, make sure to also provide `playwrightOptions.executablePath`.
+  - `playwright` <[Object]>
 - returns: <[Promise]<[Cluster]>>
 
 The method launches a cluster instance.
@@ -246,9 +246,9 @@ Closes the cluster and all opened Chromium instances including all open pages (i
 [Cluster.task]: #clustertasktaskfunction "Cluster.task"
 [Cluster]: #class-cluster "Cluster"
 
-[playwright]: https://github.com/GoogleChrome/playwright "playwright"
-[Page]: https://github.com/GoogleChrome/playwright/blob/v1.5.0/docs/api.md#class-page "Page"
-[playwright.launch]: https://github.com/GoogleChrome/playwright/blob/v1.5.0/docs/api.md#playwrightlaunchoptions "playwright.launch"
+[playwright]: https://github.com/microsoft/playwright "playwright"
+[Page]: https://playwright.dev/docs/api/class-page "Page"
+[playwright.launch]: https://playwright.dev/docs/api/class-browsertype#browser-type-launch "playwright.launch"
 
 [function]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function "Function"
 [string]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type "String"
