@@ -24,7 +24,6 @@ jobs:
       matrix:
         node:
           - 16
-          - 14
         playwright_version:
           - 1.27
 
