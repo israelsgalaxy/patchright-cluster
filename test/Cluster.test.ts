@@ -34,54 +34,54 @@ afterAll(() => {
 
 describe('options', () => {
 
-    // async function cookieTest(concurrencyType: number) {
-    //     const cluster = await Cluster.launch({
-    //         playwrightOptions: { args: ['--no-sandbox'] },
-    //         maxConcurrency: 1,
-    //         concurrency: concurrencyType,
-    //     });
+    async function cookieTest(concurrencyType: number) {
+        const cluster = await Cluster.launch({
+            playwrightOptions: { args: ['--no-sandbox'] },
+            maxConcurrency: 1,
+            concurrency: concurrencyType,
+        });
 
-    //     const randomValue = Math.random().toString();
+        const randomValue = Math.random().toString();
 
-    //     cluster.task(async ({ page, data: url }) => {
-    //         await page.goto(url);
-    //         const cookies = await page.cookies();
+        cluster.task(async ({ page, data: url }) => {
+            await page.goto(url);
+            const cookies = await page.context().cookies();
 
-    //         cookies.forEach(({ name, value }) => {
-    //             if (name === 'puppeteer-cluster-testcookie' && value === randomValue) {
-    //                 expect(true).toBe(true);
-    //             }
-    //         });
+            cookies.forEach(({ name, value }) => {
+                if (name === 'playwright-cluster-testcookie' && value === randomValue) {
+                    expect(true).toBe(true);
+                }
+            });
 
-    //         await page.setCookie({
-    //             name: 'puppeteer-cluster-testcookie',
-    //             value: randomValue,
-    //             url: TEST_URL,
-    //         });
-    //     });
+            await page.context().addCookies([{
+                name: 'playwright-cluster-testcookie',
+                value: randomValue,
+                url: TEST_URL,
+            }]);
+        });
 
-    //     // one job sets the cookie, the other page reads the cookie
-    //     cluster.queue(TEST_URL);
-    //     cluster.queue(TEST_URL);
+        // one job sets the cookie, the other page reads the cookie
+        cluster.queue(TEST_URL);
+        cluster.queue(TEST_URL);
 
-    //     await cluster.idle();
-    //     await cluster.close();
-    // }
+        await cluster.idle();
+        await cluster.close();
+    }
 
-    // test('cookie sharing in Cluster.CONCURRENCY_PAGE', async () => {
-    //     expect.assertions(1);
-    //     await cookieTest(Cluster.CONCURRENCY_PAGE);
-    // });
+    test('cookie sharing in Cluster.CONCURRENCY_PAGE', async () => {
+        expect.assertions(1);
+        await cookieTest(Cluster.CONCURRENCY_PAGE);
+    });
 
-    // test('no cookie sharing in Cluster.CONCURRENCY_CONTEXT', async () => {
-    //     expect.assertions(0);
-    //     await cookieTest(Cluster.CONCURRENCY_CONTEXT);
-    // });
+    test('no cookie sharing in Cluster.CONCURRENCY_CONTEXT', async () => {
+        expect.assertions(0);
+        await cookieTest(Cluster.CONCURRENCY_CONTEXT);
+    });
 
-    // test('no cookie sharing in Cluster.CONCURRENCY_BROWSER', async () => {
-    //     expect.assertions(0);
-    //     await cookieTest(Cluster.CONCURRENCY_BROWSER);
-    // });
+    test('no cookie sharing in Cluster.CONCURRENCY_BROWSER', async () => {
+        expect.assertions(0);
+        await cookieTest(Cluster.CONCURRENCY_BROWSER);
+    });
 
     // repeat remaining tests for all concurrency options
 
@@ -548,7 +548,7 @@ describe('options', () => {
     });
     // end of tests for all concurrency options
 
-    test('other puppeteer objects like puppeteer-core', async () => {
+    test('other playwright objects like playwright-core', async () => {
         expect.assertions(2);
 
         const executablePath = (playwright as any).executablePath(); // TODO why does this not work anymore?
@@ -826,7 +826,7 @@ describe('Repair', () => {
                     await expect(
                         page.goto(TEST_URL),
                     ).rejects.toMatchObject({
-                        // error message of puppeteer disconnect
+                        // error message of playwright disconnect
                         // before 1.9 -> error said "Protocol error"
                         // since 1.9 -> "Navigation failed because browser has disconnected!"
                         message: expect.stringMatching(/Protocol error|disconnected/),
