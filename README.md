@@ -85,7 +85,7 @@ const { Cluster } = require('playwright-cluster');
 - [Queuing functions (simple)](examples/function-queuing-simple.js)
 - [Queuing functions (complex)](examples/function-queuing-complex.js)
 - [Error handling](examples/error-handling.js)
-- [Using a different playwright library (like playwright-core or playwright-firefox)](examples/different-playwright-library.js)
+- [Using a different playwright browsers)](examples/different-playwright-library.js)
 - [Provide types for input/output with TypeScript generics](examples/typings.ts)
 
 ## Concurrency implementations

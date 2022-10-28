@@ -14,7 +14,7 @@ export default abstract class ConcurrencyImplementation {
 
     /**
      * @param options  Options that should be provided to playwright.launch
-     * @param playwright  playwright object (like playwright or playwright-core)
+     * @param playwright  playwright object
      */
     public constructor(options: LaunchOptions, playwright: any) {
         this.options = options;

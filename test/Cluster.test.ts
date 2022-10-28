@@ -421,10 +421,10 @@ describe('options', () => {
                 await cluster.task(async ({ page, data }) => {
                     return data;
                 });
-                const value1 = await cluster.execute(1);
-                const value2 = await cluster.execute('something');
-                expect(value1).toBe(1);
-                expect(value2).toBe('something');
+                const value1 = await cluster.execute('test1');
+                const value2 = await cluster.execute('test2');
+                expect(value1).toBe('test1');
+                expect(value2).toBe('test2');
 
                 await cluster.idle();
                 await cluster.close();
