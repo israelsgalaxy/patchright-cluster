@@ -796,32 +796,3 @@ describe('options', () => {
     });
 
 });
-
-describe('Repair', () => {
-    concurrencyTypes.forEach((concurrency) => {
-
-        describe(`concurrency: ${concurrency}`, () => {
-            test('Repair unexpected crash', async () => {
-
-                const cluster = await Cluster.launch({
-                    concurrency,
-                    playwrightOptions: { args: ['--no-sandbox'] },
-                    maxConcurrency: 1,
-                });
-                
-                cluster.on('taskerror', (err) => {
-                    throw err;
-                });
-
-                // second one should still work after the crash
-                cluster.queue(async ({ page }: { page: playwright.Page }) => {
-                    await page.goto(TEST_URL); // if this does not throw, we are happy
-                    expect(true).toBe(true);
-                });
-
-                await cluster.idle();
-                await cluster.close();
-            });
-        });
-    });
-});
