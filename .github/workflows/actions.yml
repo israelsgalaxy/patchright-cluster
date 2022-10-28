@@ -16,7 +16,7 @@ on:
 
 jobs:
   test:
-    name: node v${{ matrix.node }}, pptr ${{ matrix.puppeteer_version }}, ${{ matrix.os }}
+    name: node v${{ matrix.node }}, pptr ${{ matrix.playwright_version }}, ${{ matrix.os }}
 
     runs-on: ${{ matrix.os }}
 
@@ -27,13 +27,8 @@ jobs:
           - 14
           - 12
           - 10
-        puppeteer_version:
-          - 13.1.0 # 2022-01-17 - Chromium 98.0.4758.0
-          # - 10.0.0 # 2021-05-31 - Chromium 92.0.4512.0
-          - 9.1.1  # (2021-02-04) - Types: PuppeteerNodeLaunchOptions introduced
-          # - 7.0.1  # (2021-02-04) - First version to ship TypeScript as part of package
-          # - 5.5.0 #  2020-07-02 - Chromium 88.0.4298.0
-          # - 1.6.2 #  2018-08-01 - Chromium 69.0.3494.0
+        playwright_version:
+          - 1.27
 
         os:
           - ubuntu-latest
@@ -45,14 +40,14 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: npm ci
         uses: bahmutov/npm-install@v1 # basically npm ci with a cache
-      - run: npm install puppeteer@${{ matrix.puppeteer_version }}
+      - run: npm install playwright@${{ matrix.playwright_version }}
       # - run: npm test
       - run: npm run coverage
       - name: Collect coverage
         uses: coverallsapp/github-action@1.1.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: run_node-v${{ matrix.node }}_pptr-${{ matrix.puppeteer_version }}_os-${{ matrix.os }}
+          flag-name: run_node-v${{ matrix.node }}_pptr-${{ matrix.playwright_version }}_os-${{ matrix.os }}
           parallel: true
 
   report-coverage:
