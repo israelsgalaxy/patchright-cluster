@@ -25,8 +25,6 @@ jobs:
         node:
           - 16
           - 14
-          - 12
-          - 10
         playwright_version:
           - 1.27
 
