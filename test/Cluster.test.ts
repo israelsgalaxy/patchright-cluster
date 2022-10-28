@@ -2,7 +2,6 @@ import Cluster from '../src/Cluster';
 import * as http from 'http';
 import { timeoutExecute } from '../src/util';
 import * as playwright from 'playwright';
-import * as playwrightCore from 'playwright-core';
 import ConcurrencyImplementation from '../src/concurrency/ConcurrencyImplementation';
 import Browser from '../src/concurrency/built-in/Browser';
 
@@ -546,37 +545,6 @@ describe('options', () => {
         });
     });
     // end of tests for all concurrency options
-
-    test('other playwright objects like playwright-core', async () => {
-        expect.assertions(2);
-
-        const executablePath = (playwright as any).executablePath(); // TODO why does this not work anymore?
-        const cluster = await Cluster.launch({
-            concurrency: Cluster.CONCURRENCY_BROWSER,
-            playwrightOptions: {
-                executablePath,
-                args: ['--no-sandbox'],
-            },
-            maxConcurrency: 1,
-            playwright: playwrightCore,
-        });
-        cluster.on('taskerror', (err) => {
-            throw err;
-        });
-
-        cluster.task(async ({ page, data: url }) => {
-            await page.goto(url);
-            // if we get here two times without any errors, we are fine
-            expect(true).toBe(true);
-        });
-
-        // one job sets the cookie, the other page reads the cookie
-        cluster.queue(TEST_URL);
-        cluster.queue(TEST_URL);
-
-        await cluster.idle();
-        await cluster.close();
-    });
 
     describe('custom concurrency implementations', () => {
         test('Test implementation', async () => {
