@@ -52,7 +52,6 @@ describe('options', () => {
                     expect(true).toBe(true);
                 }
             });
-
             await page.context().addCookies([{
                 name: 'playwright-cluster-testcookie',
                 value: randomValue,
@@ -812,25 +811,6 @@ describe('Repair', () => {
                 
                 cluster.on('taskerror', (err) => {
                     throw err;
-                });
-
-                // first job kills the browser
-                cluster.queue(async ({ page }: { page: playwright.Page }) => {
-                    // kill process
-                    await new Promise((resolve) => {
-                        // kill(page.browser().process()!.pid, 'SIGKILL', resolve);
-                        page.close()
-                    });
-
-                    // check if its actually crashed
-                    await expect(
-                        page.goto(TEST_URL),
-                    ).rejects.toMatchObject({
-                        // error message of playwright disconnect
-                        // before 1.9 -> error said "Protocol error"
-                        // since 1.9 -> "Navigation failed because browser has disconnected!"
-                        message: expect.stringMatching(/Protocol error|disconnected/),
-                    });
                 });
 
                 // second one should still work after the crash
