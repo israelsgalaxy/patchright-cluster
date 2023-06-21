@@ -21,10 +21,12 @@ const { Cluster } = require('../dist');
         console.log(result1);
         const result2 = await cluster.execute('https://www.wikipedia.org');
         console.log(result2);
+        //
     } catch (err) {
         // Handle crawling error
     }
-
+    const metrics = cluster.metrics()
+    console.log(metrics)
     // Shutdown after everything is done
     await cluster.idle();
     await cluster.close();
