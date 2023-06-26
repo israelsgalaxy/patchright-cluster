@@ -52,21 +52,22 @@ const DEFAULT_OPTIONS: ClusterOptions = {
     sameDomainDelay: 0,
     playwright: undefined,
 };
-interface StatusMetrics{
-    startTime:  string,
-    now:  string,
-    doneTargets:  number,
-    allTargetCount:  number,
-    donePercStr:  string,
-    errorCount:  number,
-    errorPerc:  string,
+interface StatusMetrics {
+    startTime: string,
+    now: string,
+    idle: boolean,
+    doneTargets: number,
+    allTargetCount: number,
+    donePercStr: string,
+    errorCount: number,
+    errorPerc: string,
     timeRunning: string,
-    timeRemining:  string,
-    pagesPerSecond:  string,
-    pagesPerSecondString:  string,
+    timeRemining: string,
+    pagesPerSecond: string,
+    pagesPerSecondString: string,
     workers: WorkersInfo[]
 }
-interface WorkersInfo{
+interface WorkersInfo {
     id: number,
     status: string,
     url: string
@@ -552,7 +553,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
 
         display.resetCursor();
     }
-    status():StatusMetrics {
+    status(): StatusMetrics {
         const now = Date.now();
         const timeDiff = now - this.startTime;
 
@@ -594,10 +595,13 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
                 url: workerUrl
             }
         });
+        const clusterIsIdle = this.workersBusy.length === 0 && this.jobQueue.size() === 0;
+
         return {
             startTime: util.formatDateTime(this.startTime),
             now: util.formatDateTime(now),
             doneTargets: doneTargets,
+            idle: clusterIsIdle,
             allTargetCount: this.allTargetCount,
             donePercStr: donePercStr + '%',
             errorCount: this.errorCount,
@@ -608,7 +612,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
             pagesPerSecondString: pagesPerSecond + ' pages/second',
             workers: workersInfo
         }
-        
+
     }
 
 }
