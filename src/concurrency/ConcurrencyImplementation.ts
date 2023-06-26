@@ -1,5 +1,5 @@
 
-import { Page, LaunchOptions } from 'playwright';
+import { Page, LaunchOptions, BrowserType } from 'playwright';
 
 /**
  * ABSTRACT CLASS Needs to be implemented to manage one or more browsers via playwright instances
@@ -10,13 +10,13 @@ import { Page, LaunchOptions } from 'playwright';
 export default abstract class ConcurrencyImplementation {
 
     protected options: LaunchOptions;
-    protected playwright: any;
+    protected playwright: BrowserType<{}>;
 
     /**
      * @param options  Options that should be provided to playwright.launch
      * @param playwright  playwright object
      */
-    public constructor(options: LaunchOptions, playwright: any) {
+    public constructor(options: LaunchOptions, playwright: BrowserType<{}>) {
         this.options = options;
         this.playwright = playwright;
     }
@@ -80,5 +80,5 @@ export interface ResourceData {
 
 export type ConcurrencyImplementationClassType = new (
     options: LaunchOptions,
-    playwright: any,
+    playwright: BrowserType<{}>,
 ) => ConcurrencyImplementation;

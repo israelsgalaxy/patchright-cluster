@@ -16,7 +16,7 @@ export default abstract class SingleBrowserImplementation extends ConcurrencyImp
     private openInstances: number = 0;
     private waitingForRepairResolvers: (() => void)[] = [];
 
-    public constructor(options: playwright.LaunchOptions, playwright: any) {
+    public constructor(options: playwright.LaunchOptions, playwright: playwright.BrowserType<{}>) {
         super(options, playwright);
     }
 
@@ -38,7 +38,7 @@ export default abstract class SingleBrowserImplementation extends ConcurrencyImp
         }
 
         try {
-            this.browser = await this.playwright.firefox.launch(this.options) as playwright.Browser;
+            this.browser = await this.playwright.launch(this.options) as playwright.Browser;
         } catch (err) {
             throw new Error('Unable to restart chrome.');
         }
@@ -49,7 +49,7 @@ export default abstract class SingleBrowserImplementation extends ConcurrencyImp
     }
 
     public async init() {
-        this.browser = await this.playwright.firefox.launch(this.options);
+        this.browser = await this.playwright.launch(this.options);
     }
 
     public async close() {
@@ -88,7 +88,7 @@ export default abstract class SingleBrowserImplementation extends ConcurrencyImp
                 };
             },
 
-            close: async () => {},
+            close: async () => { },
 
             repair: async () => {
                 debug('Repair requested');

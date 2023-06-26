@@ -6,7 +6,7 @@ import Worker, { WorkResult } from './Worker';
 
 import * as builtInConcurrency from './concurrency/builtInConcurrency';
 
-import type { Page, LaunchOptions } from 'playwright';
+import { Page, LaunchOptions, BrowserType, chromium } from 'playwright';
 import Queue from './Queue';
 import SystemMonitor from './SystemMonitor';
 import { EventEmitter } from 'events';
@@ -27,7 +27,7 @@ interface ClusterOptions {
     retryDelay: number;
     skipDuplicateUrls: boolean;
     sameDomainDelay: number;
-    playwright: any;
+    playwright: BrowserType<{}> | null | undefined;
 }
 
 type Partial<T> = {
@@ -106,7 +106,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
 
     private taskFunction: TaskFunction<JobData, ReturnData> | null = null;
     private idleResolvers: (() => void)[] = [];
-    private waitForOneResolvers: ((data:JobData) => void)[] = [];
+    private waitForOneResolvers: ((data: JobData) => void)[] = [];
     private browser: ConcurrencyImplementation | null = null;
 
     private isClosed = false;
@@ -152,19 +152,19 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
         let playwright = this.options.playwright;
 
         if (this.options.playwright == null) { // check for null or undefined
-            playwright = require('playwright');
+            playwright = chromium;
         } else {
             debug('Using provided (custom) playwright object.');
         }
 
         if (this.options.concurrency === Cluster.CONCURRENCY_PAGE) {
-            this.browser = new builtInConcurrency.Page(browserOptions, playwright);
+            this.browser = new builtInConcurrency.Page(browserOptions, playwright!);
         } else if (this.options.concurrency === Cluster.CONCURRENCY_CONTEXT) {
-            this.browser = new builtInConcurrency.Context(browserOptions, playwright);
+            this.browser = new builtInConcurrency.Context(browserOptions, playwright!);
         } else if (this.options.concurrency === Cluster.CONCURRENCY_BROWSER) {
-            this.browser = new builtInConcurrency.Browser(browserOptions, playwright);
+            this.browser = new builtInConcurrency.Browser(browserOptions, playwright!);
         } else if (typeof this.options.concurrency === 'function') {
-            this.browser = new this.options.concurrency(browserOptions, playwright);
+            this.browser = new this.options.concurrency(browserOptions, playwright!);
         } else {
             throw new Error(`Unknown concurrency option: ${this.options.concurrency}`);
         }
@@ -238,7 +238,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
     }
 
     private nextWorkCall: number = 0;
-    private workCallTimeout: NodeJS.Timer|null = null;
+    private workCallTimeout: NodeJS.Timer | null = null;
 
     // check for new work soon (wait if there will be put more data into the queue, first)
     private async work() {
@@ -397,7 +397,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
     // Type Guard for TypeScript
     private isTaskFunction(
         data: JobData | TaskFunction<JobData, ReturnData>,
-    ) : data is TaskFunction<JobData, ReturnData> {
+    ): data is TaskFunction<JobData, ReturnData> {
         return (typeof data === 'function');
     }
 
@@ -458,7 +458,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
     }
 
     public waitForOne(): Promise<JobData> {
-        return new Promise(resolve  => this.waitForOneResolvers.push(resolve));
+        return new Promise(resolve => this.waitForOneResolvers.push(resolve));
     }
 
     public async close(): Promise<void> {

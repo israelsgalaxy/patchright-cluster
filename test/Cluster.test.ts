@@ -321,7 +321,7 @@ describe('options', () => {
                     throw err;
                 });
 
-                cluster.queue(async ({ page, data }: { page: any, data: any}) => {
+                cluster.queue(async ({ page, data }: { page: any, data: any }) => {
                     expect(page).toBeDefined();
                     expect(data).toBeUndefined();
                 });
@@ -358,7 +358,7 @@ describe('options', () => {
                     expect(url).toBe('works too');
                 });
                 cluster.queue('works');
-                cluster.queue(async ({ page, data }: { page: any, data: any}) => {
+                cluster.queue(async ({ page, data }: { page: any, data: any }) => {
                     expect(page).toBeDefined();
                     expect(data).toBeUndefined();
                 });
@@ -497,8 +497,8 @@ describe('options', () => {
                     throw err;
                 });
 
-                const func2 = async () => {};
-                const func3 = async () => {};
+                const func2 = async () => { };
+                const func3 = async () => { };
 
                 let i = 0;
                 cluster.on('queue', (data, func) => {
@@ -553,7 +553,7 @@ describe('options', () => {
             class CustomConcurrency extends ConcurrencyImplementation {
                 private browser: playwright.Browser | undefined = undefined;
                 public async init() {
-                    this.browser = await this.playwright.firefox.launch(this.options);
+                    this.browser = await this.playwright.launch(this.options);
                 }
                 public async close() {
                     await (this.browser as playwright.Browser).close();
@@ -581,7 +581,7 @@ describe('options', () => {
                         // no repair for this tests, but you should really implement this (!!!)
                         // have a look at Browser, Context or Page in built-in directory for a
                         // full implementation
-                        repair: async () => {},
+                        repair: async () => { },
                     };
                 }
             }
@@ -651,7 +651,7 @@ describe('options', () => {
             class TestConcurrency extends ConcurrencyImplementation {
                 private browser: playwright.Browser | undefined = undefined;
                 public async init() {
-                    this.browser = await this.playwright.firefox.launch(this.options);
+                    this.browser = await this.playwright.launch(this.options);
                 }
                 public async close() {
                     await (this.browser as playwright.Browser).close();
@@ -680,7 +680,7 @@ describe('options', () => {
                         // no repair for this tests, but you should really implement this (!!!)
                         // have a look at Browser, Context or Page in built-in directory for a
                         // full implementation
-                        repair: async () => {},
+                        repair: async () => { },
                     };
                 }
             }
