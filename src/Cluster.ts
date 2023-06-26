@@ -65,6 +65,7 @@ interface StatusMetrics {
     timeRemining: string,
     pagesPerSecond: string,
     pagesPerSecondString: string,
+    remainingPages: number,
     workers: WorkersInfo[]
 }
 interface WorkersInfo {
@@ -605,6 +606,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
             allTargetCount: this.allTargetCount,
             donePercStr: donePercStr + '%',
             errorCount: this.errorCount,
+            remainingPages: this.jobQueue.size(),
             errorPerc: errorPerc + '%',
             timeRunning: timeRunning,
             timeRemining: timeRemining,
