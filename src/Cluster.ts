@@ -269,7 +269,10 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
         if (this.jobQueue.size() === 0) { // no jobs available
             if (this.workersBusy.length === 0) {
                 this.idleResolvers.forEach(resolve => resolve());
-                this.emit('idle');
+                //if has completed any tasks
+                if (this.allTargetCount > 0) {
+                    this.emit('idle');
+                }
             }
             return;
         }

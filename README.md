@@ -163,6 +163,18 @@ In case the task was queued via [Cluster.execute] there will be no event fired.
   });
 ```
 
+#### event: 'idle'
+
+- <[void]>
+
+Emitted when a cluster doesn't have anything left to do. This event is emitted when the queue is empty and all workers are idle.
+
+```js
+  cluster.on('idle', () => {
+      console.log('Cluster is idle');
+  });
+```
+
 #### event: 'queue'
 
 - <\?[Object]>
