@@ -87,10 +87,11 @@ const { Cluster } = require('playwright-cluster');
 - [Error handling](examples/error-handling.js)
 - [Using a different playwright browsers)](examples/different-playwright-library.js)
 - [Provide types for input/output with TypeScript generics](examples/typings.ts)
+- [Custom Browser with playwright-extra and stealth.](examples/customBrowser.ts)
 
 ## Concurrency implementations
 
-There are different concurrency models, which define how isolated each job is run. You can set it in the `options` when calling [Cluster.launch](#Clusterlaunchoptions). The default option is `Cluster.CONCURRENCY_CONTEXT`, but it is recommended to always specify which one you want to use.
+There are different concurrency models, which define how isolated each job is run. You can set it in the `options` when calling [Cluster.launch](#clusterlaunchoptions). The default option is `Cluster.CONCURRENCY_CONTEXT`, but it is recommended to always specify which one you want to use.
 
 | Concurrency | Description | Shared data |
 | --- | --- | --- |
