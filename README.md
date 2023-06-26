@@ -87,7 +87,7 @@ const { Cluster } = require('playwright-cluster');
 - [Error handling](examples/error-handling.js)
 - [Using a different playwright browsers)](examples/different-playwright-library.js)
 - [Provide types for input/output with TypeScript generics](examples/typings.ts)
-- [Custom Browser with playwright-extra and stealth.](examples/customBrowser.ts)
+- [Custom Browser with playwright-extra and stealth.](examples/customBrowser.js)
 
 ## Concurrency implementations
 
