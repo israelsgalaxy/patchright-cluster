@@ -5,7 +5,8 @@ import { ResourceData } from '../ConcurrencyImplementation';
 import SingleBrowserImplementation from '../SingleBrowserImplementation';
 
 export default class Page extends SingleBrowserImplementation {
-
+    public async init() { }
+    public async close() { }
     private context: playwright.BrowserContext | null = null;;
     protected async createResources(): Promise<ResourceData> {
         const browser = this.browser as playwright.Browser;

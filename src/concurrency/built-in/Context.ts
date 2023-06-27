@@ -5,7 +5,8 @@ import { ResourceData } from '../ConcurrencyImplementation';
 import SingleBrowserImplementation from '../SingleBrowserImplementation';
 
 export default class Context extends SingleBrowserImplementation {
-
+    public async init() { }
+    public async close() { }
     protected async createResources(): Promise<ResourceData> {
         const context = await (this.browser as playwright.Browser)
             .newContext();
