@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "coverage": "jest --coverage --detectOpenHandles",
+    "coverage": "jest --coverage --detectOpenHandles --forceExit",
     "dev": "tsc --watch",
     "publish": "npm publish --access public"
   },
