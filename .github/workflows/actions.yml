@@ -23,7 +23,7 @@ jobs:
     strategy:
       matrix:
         node:
-          - 16
+          - 18
         playwright_version:
           - 1.35
 
