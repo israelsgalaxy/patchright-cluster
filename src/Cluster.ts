@@ -266,7 +266,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
     }
 
     private async doWork() {
-        if (this.jobQueue.size() === 0) { // no jobs available
+        if (this.jobQueue.size() === 0 || this.isClosed) { // no jobs available
             if (this.workersBusy.length === 0) {
                 this.idleResolvers.forEach(resolve => resolve());
                 //if has completed any tasks
