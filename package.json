@@ -1,6 +1,6 @@
 {
   "name": "playwright-cluster",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Cluster management for playwright",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
