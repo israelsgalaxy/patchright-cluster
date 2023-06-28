@@ -30,7 +30,7 @@ export interface WorkData {
 export type WorkResult = WorkError | WorkData;
 
 export default class Worker<JobData, ReturnData> implements WorkerOptions {
-
+    isClosed: boolean = false;
     cluster: Cluster;
     args: string[];
     id: number;
@@ -59,7 +59,7 @@ export default class Worker<JobData, ReturnData> implements WorkerOptions {
 
         let tries = 0;
 
-        while (jobInstance === null) {
+        while (jobInstance === null && !this.isClosed) {
             try {
                 jobInstance = await this.browser.jobInstance();
                 page = jobInstance.resources.page;
@@ -72,7 +72,12 @@ export default class Worker<JobData, ReturnData> implements WorkerOptions {
                 }
             }
         }
-
+        if (this.isClosed) {
+            return {
+                data: 'Worker closed',
+                type: 'success',
+            };
+        }
         // We can be sure that page is set now, otherwise an exception would've been thrown
         page = page as Page; // this is just for TypeScript
 
@@ -108,7 +113,7 @@ export default class Worker<JobData, ReturnData> implements WorkerOptions {
         debug(`Finished executing task on worker #${this.id}`);
 
         try {
-            await jobInstance.close();
+            await jobInstance?.close();
         } catch (e: any) {
             debug(`Error closing browser instance for ${inspect(job.data)}: ${e.message}`);
             await this.browser.repair();
@@ -130,6 +135,7 @@ export default class Worker<JobData, ReturnData> implements WorkerOptions {
 
     public async close(): Promise<void> {
         try {
+            this.isClosed = true;
             await this.browser.close();
         } catch (err: any) {
             debug(`Unable to close worker browser. Error message: ${err.message}`);

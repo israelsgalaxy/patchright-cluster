@@ -88,7 +88,9 @@ export default abstract class SingleBrowserImplementation extends ConcurrencyImp
                 };
             },
 
-            close: async () => { },
+            close: async () => {
+                await this.close();
+            },
 
             repair: async () => {
                 debug('Repair requested');

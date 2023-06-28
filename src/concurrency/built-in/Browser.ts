@@ -9,13 +9,20 @@ const BROWSER_TIMEOUT = 5000;
 
 export default class Browser extends ConcurrencyImplementation {
     public async init() { }
-    public async close() { }
-
+    public async close() {
+        try {
+            await (this.browser as playwright.Browser)?.close();
+        } catch (error: any) {
+            debug("Error closing browser: " + error.message)
+        }
+    }
+    browser: playwright.Browser | null = null;
     public async workerInstance(perBrowserOptions: playwright.LaunchOptions | undefined):
         Promise<WorkerInstance> {
 
         const options = perBrowserOptions || this.options;
         let browser = await this.playwright.launch(options) as playwright.Browser;
+        this.browser = browser;
         let page: playwright.Page;
         let context: any;
 
