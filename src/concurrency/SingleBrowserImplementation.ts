@@ -16,8 +16,8 @@ export default abstract class SingleBrowserImplementation extends ConcurrencyImp
     private openInstances: number = 0;
     private waitingForRepairResolvers: (() => void)[] = [];
 
-    public constructor(options: playwright.LaunchOptions, playwright: playwright.BrowserType<{}>) {
-        super(options, playwright);
+    public constructor(options: playwright.LaunchOptions, playwright: playwright.BrowserType<{}>, pageOptions: playwright.BrowserContextOptions | undefined) {
+        super(options, playwright, pageOptions);
     }
 
     private async repair() {
@@ -68,7 +68,6 @@ export default abstract class SingleBrowserImplementation extends ConcurrencyImp
                 if (this.repairRequested) {
                     await this.repair();
                 }
-
                 await timeoutExecute(BROWSER_TIMEOUT, (async () => {
                     resources = await this.createResources();
                 })());

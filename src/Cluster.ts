@@ -6,7 +6,7 @@ import Worker, { WorkResult } from './Worker';
 
 import * as builtInConcurrency from './concurrency/builtInConcurrency';
 
-import { Page, LaunchOptions, BrowserType, chromium } from 'playwright';
+import { Page, LaunchOptions, BrowserType, chromium, BrowserContextOptions } from 'playwright';
 import Queue from './Queue';
 import SystemMonitor from './SystemMonitor';
 import { EventEmitter } from 'events';
@@ -21,6 +21,8 @@ interface ClusterOptions {
     workerCreationDelay: number;
     playwrightOptions: LaunchOptions;
     perBrowserOptions: LaunchOptions[] | undefined;
+    perPageOptions: BrowserContextOptions[] | undefined;
+    pageOptions: BrowserContextOptions | undefined;
     monitor: boolean;
     timeout: number;
     retryLimit: number;
@@ -44,6 +46,8 @@ const DEFAULT_OPTIONS: ClusterOptions = {
         // headless: false, // just for testing...
     },
     perBrowserOptions: undefined,
+    perPageOptions: undefined,
+    pageOptions: undefined,
     monitor: false,
     timeout: 30 * 1000,
     retryLimit: 0,
@@ -97,6 +101,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
 
     private options: ClusterOptions;
     private perBrowserOptions: LaunchOptions[] | null = null;
+    private perPageOptions: BrowserContextOptions[] | null = null;
     private workers: Worker<JobData, ReturnData>[] = [];
     private workersAvail: Worker<JobData, ReturnData>[] = [];
     private workersBusy: Worker<JobData, ReturnData>[] = [];
@@ -151,6 +156,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
 
     private async init() {
         const browserOptions = this.options.playwrightOptions;
+        const pageOptions = this.options.pageOptions;
         let playwright = this.options.playwright;
 
         if (this.options.playwright == null) { // check for null or undefined
@@ -160,13 +166,13 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
         }
 
         if (this.options.concurrency === Cluster.CONCURRENCY_PAGE) {
-            this.browser = new builtInConcurrency.Page(browserOptions, playwright!);
+            this.browser = new builtInConcurrency.Page(browserOptions, playwright!, pageOptions);
         } else if (this.options.concurrency === Cluster.CONCURRENCY_CONTEXT) {
-            this.browser = new builtInConcurrency.Context(browserOptions, playwright!);
+            this.browser = new builtInConcurrency.Context(browserOptions, playwright!, pageOptions);
         } else if (this.options.concurrency === Cluster.CONCURRENCY_BROWSER) {
-            this.browser = new builtInConcurrency.Browser(browserOptions, playwright!);
+            this.browser = new builtInConcurrency.Browser(browserOptions, playwright!, pageOptions);
         } else if (typeof this.options.concurrency === 'function') {
-            this.browser = new this.options.concurrency(browserOptions, playwright!);
+            this.browser = new this.options.concurrency(browserOptions, playwright!, pageOptions);
         } else {
             throw new Error(`Unknown concurrency option: ${this.options.concurrency}`);
         }
@@ -180,6 +186,16 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
         }
         if (this.options.perBrowserOptions) {
             this.perBrowserOptions = [...this.options.perBrowserOptions];
+        }
+        if (this.options.perPageOptions
+            && this.options.perPageOptions.length !== this.options.maxConcurrency) {
+            throw new Error('perPageOptions length must equal maxConcurrency');
+        }
+        if (this.options.perPageOptions && this.options.concurrency !== Cluster.CONCURRENCY_BROWSER) {
+            throw new Error('perPageOptions can only be used with concurrency: Cluster.CONCURRENCY_BROWSER');
+        }
+        if (this.options.perPageOptions) {
+            this.perPageOptions = [...this.options.perPageOptions];
         }
 
         try {
@@ -207,13 +223,17 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
         if (this.perBrowserOptions && this.perBrowserOptions.length > 0) {
             nextWorkerOption = this.perBrowserOptions.shift();
         }
+        let nextWorkerContextOption;
+        if (this.perPageOptions && this.perPageOptions.length > 0) {
+            nextWorkerContextOption = this.perPageOptions.shift();
+        }
 
         const workerId = this.nextWorkerId;
 
         let workerBrowserInstance: WorkerInstance;
         try {
             workerBrowserInstance = await (this.browser as ConcurrencyImplementation)
-                .workerInstance(nextWorkerOption);
+                .workerInstance(nextWorkerOption, nextWorkerContextOption);
         } catch (err: any) {
             throw new Error(`Unable to launch browser for worker, error message: ${err.message}`);
         }

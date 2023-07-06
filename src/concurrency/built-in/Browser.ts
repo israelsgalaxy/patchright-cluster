@@ -17,19 +17,20 @@ export default class Browser extends ConcurrencyImplementation {
         }
     }
     browser: playwright.Browser | null = null;
-    public async workerInstance(perBrowserOptions: playwright.LaunchOptions | undefined):
+    public async workerInstance(perBrowserOptions: playwright.LaunchOptions | undefined, perPageOptions: playwright.BrowserContextOptions | undefined):
         Promise<WorkerInstance> {
 
         const options = perBrowserOptions || this.options;
+        const pageOptions = perPageOptions || this.pageOptions;
         let browser = await this.playwright.launch(options) as playwright.Browser;
         this.browser = browser;
         let page: playwright.Page;
-        let context: any;
+        let context: playwright.BrowserContext;
 
         return {
             jobInstance: async () => {
                 await timeoutExecute(BROWSER_TIMEOUT, (async () => {
-                    context = await browser.newContext();
+                    context = await browser.newContext(pageOptions);
                     page = await context.newPage();
                 })());
 

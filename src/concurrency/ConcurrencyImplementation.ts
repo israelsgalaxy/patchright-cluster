@@ -1,5 +1,5 @@
 
-import { Page, LaunchOptions, BrowserType } from 'playwright';
+import { Page, LaunchOptions, BrowserType, BrowserContextOptions } from 'playwright';
 
 /**
  * ABSTRACT CLASS Needs to be implemented to manage one or more browsers via playwright instances
@@ -11,14 +11,16 @@ export default abstract class ConcurrencyImplementation {
 
     protected options: LaunchOptions;
     protected playwright: BrowserType<{}>;
+    protected pageOptions: BrowserContextOptions | undefined;
 
     /**
      * @param options  Options that should be provided to playwright.launch
      * @param playwright  playwright object
      */
-    public constructor(options: LaunchOptions, playwright: BrowserType<{}>) {
+    public constructor(options: LaunchOptions, playwright: BrowserType<{}>, pageOptions: BrowserContextOptions | undefined) {
         this.options = options;
         this.playwright = playwright;
+        this.pageOptions = pageOptions;
     }
 
     /**
@@ -34,7 +36,7 @@ export default abstract class ConcurrencyImplementation {
     /**
      * Creates a worker and returns it
      */
-    public abstract workerInstance(perBrowserOptions: LaunchOptions | undefined):
+    public abstract workerInstance(perBrowserOptions: LaunchOptions | undefined, perPageOptions: BrowserContextOptions | undefined):
         Promise<WorkerInstance>;
 
 }
@@ -81,4 +83,5 @@ export interface ResourceData {
 export type ConcurrencyImplementationClassType = new (
     options: LaunchOptions,
     playwright: BrowserType<{}>,
+    pageOptions: BrowserContextOptions | undefined
 ) => ConcurrencyImplementation;
