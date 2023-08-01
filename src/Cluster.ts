@@ -325,7 +325,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
 
         // Check if URL was already crawled (on skipDuplicateUrls)
         if (this.options.skipDuplicateUrls
-            && url !== undefined && this.duplicateCheckUrls.has(url)) {
+            && url !== undefined && this.duplicateCheckUrls.has(url) && job.tries === 0) {
             // already crawled, just ignore
             debug(`Skipping duplicate URL: ${job.getUrl()}`);
             this.work();
