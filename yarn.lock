@@ -2684,10 +2684,10 @@
   dependencies:
     "find-up" "^4.0.0"
 
-"playwright-core@*", "playwright-core@1.35.1":
-  "integrity" "sha512-pNXb6CQ7OqmGDRspEjlxE49w+4YtR6a3X6mT1hZXeJHWmsEz7SunmvZeiG/+y1yyMZdHnnn73WKYdtV1er0Xyg=="
-  "resolved" "https://registry.npmjs.org/playwright-core/-/playwright-core-1.35.1.tgz"
-  "version" "1.35.1"
+"playwright-core@*", "playwright-core@1.38.1":
+  "integrity" "sha512-tQqNFUKa3OfMf4b2jQ7aGLB8o9bS3bOY0yMEtldtC2+spf8QXG9zvXLTXUeRsoNuxEYMgLYR+NXfAa1rjKRcrg=="
+  "resolved" "https://registry.npmjs.org/playwright-core/-/playwright-core-1.38.1.tgz"
+  "version" "1.38.1"
 
 "playwright-extra@*", "playwright-extra@^4.3.6":
   "integrity" "sha512-q2rVtcE8V8K3vPVF1zny4pvwZveHLH8KBuVU2MoE3Jw4OKVoBWsHI9CH9zPydovHHOCDxjGN2Vg+2m644q3ijA=="
@@ -2696,12 +2696,14 @@
   dependencies:
     "debug" "^4.3.4"
 
-"playwright@*", "playwright@^1.35.1":
-  "integrity" "sha512-NbwBeGJLu5m7VGM0+xtlmLAH9VUfWwYOhUi/lSEDyGg46r1CA9RWlvoc5yywxR9AzQb0mOCm7bWtOXV7/w43ZA=="
-  "resolved" "https://registry.npmjs.org/playwright/-/playwright-1.35.1.tgz"
-  "version" "1.35.1"
+"playwright@*", "playwright@^1.38.1":
+  "integrity" "sha512-oRMSJmZrOu1FP5iu3UrCx8JEFRIMxLDM0c/3o4bpzU5Tz97BypefWf7TuTNPWeCe279TPal5RtPPZ+9lW/Qkow=="
+  "resolved" "https://registry.npmjs.org/playwright/-/playwright-1.38.1.tgz"
+  "version" "1.38.1"
   dependencies:
-    "playwright-core" "1.35.1"
+    "playwright-core" "1.38.1"
+  optionalDependencies:
+    "fsevents" "2.3.2"
 
 "prelude-ls@~1.1.2":
   "integrity" "sha512-ESF23V4SKG6lVSGZgYNpbsiaAkdab6ZgOxe52p7+Kid3W3u3bxR4Vfd/o21dmN7jSt0IwgZ4v5MUd26FEtXE9w=="

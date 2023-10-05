@@ -1,6 +1,6 @@
 {
   "name": "playwright-cluster",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Cluster management for playwright",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,7 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "debug": "^4.3.3",
-    "playwright": "^1.35.1"
+    "playwright": "^1.38.1"
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",
