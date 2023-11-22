@@ -189,8 +189,8 @@ Emitted when a task is queued via [Cluster.queue] or [Cluster.execute]. The firs
   - `maxConcurrency` <[number]> Maximal number of parallel workers. Defaults to `1`.
   - `playwrightOptions` <[Object]> Object passed to [playwright.launch]. See playwright documentation for more information. Defaults to `{}`.
   - `perBrowserOptions` <[Array]<[Object]>> Object passed to [playwright.launch] for each individual browser. If set, `playwrightOptions` will be ignored. Defaults to `undefined`(meaning that `playwrightOptions` will be used).
-  - `perPageOptions` <[Array]<[Object]>> Object passed to [browser.createContext] for each individual context. If set, `pageOptions` will be ignored. Defaults to `undefined`(meaning that `pageOptions` will be used).
-  - `pageOptions` <[Object]> Object passed to [browser.createContext]. See playwright documentation for more information. Defaults to `undefined`.
+  - `perPageOptions` <[Array]<[Object]>> Object passed to [browser.newContext] for each individual context. If set, `pageOptions` will be ignored. Defaults to `undefined`(meaning that `pageOptions` will be used).
+  - `pageOptions` <[Object]> Object passed to [browser.newContext]. See playwright documentation for more information. Defaults to `undefined`.
   - `retryLimit` <[number]> How often do you want to retry a job before marking it as failed. Ignored by tasks queued via [Cluster.execute]. Defaults to `0`.
   - `retryDelay` <[number]> How much time should pass at minimum between the job execution and its retry. Ignored by tasks queued via [Cluster.execute]. Defaults to `0`.
   - `sameDomainDelay` <[number]> How much time should pass at minimum between two requests to the same domain. If you use this field, the queued `data` must be your URL or `data` must be an object containing a field called `url`.
