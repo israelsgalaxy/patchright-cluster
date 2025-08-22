@@ -1,5 +1,5 @@
 
-import { Page, LaunchOptions, BrowserType, BrowserContextOptions } from 'playwright';
+import { Page, LaunchOptions, BrowserType, BrowserContextOptions } from 'patchright';
 
 /**
  * ABSTRACT CLASS Needs to be implemented to manage one or more browsers via playwright instances

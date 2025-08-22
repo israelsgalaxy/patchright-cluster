@@ -1,7 +1,7 @@
 import Cluster from '../src/Cluster';
 import * as http from 'http';
 import { timeoutExecute } from '../src/util';
-import * as playwright from 'playwright';
+import * as playwright from 'patchright';
 import ConcurrencyImplementation from '../src/concurrency/ConcurrencyImplementation';
 import Browser from '../src/concurrency/built-in/Browser';
 

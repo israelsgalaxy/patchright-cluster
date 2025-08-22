@@ -1,7 +1,7 @@
 import Job from './Job';
 import type Cluster from './Cluster';
 import type { TaskFunction } from './Cluster';
-import type { Page } from 'playwright';
+import type { Page } from 'patchright';
 import { timeoutExecute, debugGenerator, log } from './util';
 import { inspect } from 'util';
 import { WorkerInstance, JobInstance } from './concurrency/ConcurrencyImplementation';
@@ -35,6 +35,7 @@ export default class Worker<JobData, ReturnData> implements WorkerOptions {
     args: string[];
     id: number;
     browser: WorkerInstance;
+    busy = false;
 
     activeTarget: Job<JobData, ReturnData> | null = null;
 

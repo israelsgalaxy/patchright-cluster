@@ -1,5 +1,5 @@
 
-import * as playwright from 'playwright';
+import * as playwright from 'patchright';
 import ConcurrencyImplementation, { ResourceData } from './ConcurrencyImplementation';
 
 import { debugGenerator, timeoutExecute } from '../util';
@@ -62,6 +62,7 @@ export default abstract class SingleBrowserImplementation extends ConcurrencyImp
 
     public async workerInstance() {
         let resources: ResourceData;
+        let closed = false;
 
         return {
             jobInstance: async () => {
@@ -70,6 +71,7 @@ export default abstract class SingleBrowserImplementation extends ConcurrencyImp
                 }
                 await timeoutExecute(BROWSER_TIMEOUT, (async () => {
                     resources = await this.createResources();
+                    resources.page.once("close", page => closed = true);
                 })());
                 this.openInstances += 1;
 
@@ -77,8 +79,10 @@ export default abstract class SingleBrowserImplementation extends ConcurrencyImp
                     resources,
 
                     close: async () => {
+                        debug('Close requested for job (worker) in browser pool.');
                         this.openInstances -= 1; // decrement first in case of error
-                        await timeoutExecute(BROWSER_TIMEOUT, this.freeResources(resources));
+                        if (!closed)
+                            await timeoutExecute(BROWSER_TIMEOUT, this.freeResources(resources));
 
                         if (this.repairRequested) {
                             await this.repair();
@@ -88,7 +92,11 @@ export default abstract class SingleBrowserImplementation extends ConcurrencyImp
             },
 
             close: async () => {
-                await this.close();
+                debug('Close requested for worker in browser pool.');
+                this.openInstances -= 1; // decrement first in case of error
+                if (!closed) {
+                    await timeoutExecute(BROWSER_TIMEOUT, this.freeResources(resources));
+                }
             },
 
             repair: async () => {

@@ -1,5 +1,5 @@
 
-import * as playwright from 'playwright';
+import * as playwright from 'patchright';
 
 import { ResourceData } from '../ConcurrencyImplementation';
 import SingleBrowserImplementation from '../SingleBrowserImplementation';

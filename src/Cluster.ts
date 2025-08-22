@@ -6,7 +6,7 @@ import Worker, { WorkResult } from './Worker';
 
 import * as builtInConcurrency from './concurrency/builtInConcurrency';
 
-import { Page, LaunchOptions, BrowserType, chromium, BrowserContextOptions } from 'playwright';
+import { Page, LaunchOptions, BrowserType, chromium, BrowserContextOptions } from 'patchright';
 import Queue from './Queue';
 import SystemMonitor from './SystemMonitor';
 import { EventEmitter } from 'events';
@@ -103,8 +103,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
     private perBrowserOptions: LaunchOptions[] | null = null;
     private perPageOptions: BrowserContextOptions[] | null = null;
     private workers: Worker<JobData, ReturnData>[] = [];
-    private workersAvail: Worker<JobData, ReturnData>[] = [];
-    private workersBusy: Worker<JobData, ReturnData>[] = [];
+    private workersBusy = 0;
     private workersStarting = 0;
 
     private allTargetCount = 0;
@@ -208,6 +207,11 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
             await this.systemMonitor.init();
         }
 
+        // initialize the pool of workers
+        for (let i = 0; i < this.options.maxConcurrency; ++i) {
+            await this.launchWorker();
+        }
+
         // needed in case resources are getting free (like CPU/memory) to check if
         // can launch workers
         this.checkForWorkInterval = setInterval(() => this.work(), CHECK_FOR_WORK_INTERVAL);
@@ -250,7 +254,6 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
             // cluster was closed while we created a new worker (should rarely happen)
             worker.close();
         } else {
-            this.workersAvail.push(worker);
             this.workers.push(worker);
         }
     }
@@ -287,11 +290,11 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
 
     private async doWork() {
         if (this.jobQueue.size() === 0 || this.isClosed) { // no jobs available
-            if (this.workersBusy.length === 0) {
+            if (this.workersBusy === 0) {
                 // allow retry jobs to be executed.
                 setTimeout(() => {
                     if (this.jobQueue.size() === 0 || this.isClosed) { // no jobs available
-                        if (this.workersBusy.length === 0) {
+                        if (this.workersBusy === 0) {
                             this.idleResolvers.forEach(resolve => resolve());
                             //if has completed any tasks
                             if (this.allTargetCount > 0) {
@@ -305,7 +308,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
             }
             return;
         }
-        if (this.workersAvail.length === 0) { // no workers available
+        if (this.workers.length === 0) { // no workers available
             if (this.allowedToStartWorker()) {
                 await this.launchWorker();
                 this.work();
@@ -353,10 +356,11 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
             this.lastDomainAccesses.set(domain, Date.now());
         }
 
-        const worker = this.workersAvail.shift() as Worker<JobData, ReturnData>;
-        this.workersBusy.push(worker);
+        const worker = this.workers.shift() as Worker<JobData, ReturnData>;
+        worker.busy = true;
+        this.workersBusy += 1;
 
-        if (this.workersAvail.length !== 0 || this.allowedToStartWorker()) {
+        if (this.workers.length !== 0 || this.allowedToStartWorker()) {
             // we can execute more work in parallel
             this.work();
         }
@@ -405,12 +409,11 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
         );
         this.waitForOneResolvers = [];
 
-        // add worker to available workers again
-        const workerIndex = this.workersBusy.indexOf(worker);
-        this.workersBusy.splice(workerIndex, 1);
+        this.workersBusy -= 1;
+        worker.busy = false;
+        worker.close();
 
-        this.workersAvail.push(worker);
-
+        await this.launchWorker();
         this.work();
     }
 
@@ -533,7 +536,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
         const now = Date.now();
         const timeDiff = now - this.startTime;
 
-        const doneTargets = this.allTargetCount - this.jobQueue.size() - this.workersBusy.length;
+        const doneTargets = this.allTargetCount - this.jobQueue.size() - this.workersBusy;
         const donePercentage = this.allTargetCount === 0
             ? 1 : (doneTargets / this.allTargetCount);
         const donePercStr = (100 * donePercentage).toFixed(2);
@@ -564,7 +567,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
         display.log(`== Workers:   ${this.workers.length + this.workersStarting}`);
 
         this.workers.forEach((worker, i) => {
-            const isIdle = this.workersAvail.indexOf(worker) !== -1;
+            const isIdle = this.workers.indexOf(worker) !== -1;
             let workOrIdle;
             let workerUrl = '';
             if (isIdle) {
@@ -590,7 +593,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
         const now = Date.now();
         const timeDiff = now - this.startTime;
 
-        const doneTargets = this.allTargetCount - this.jobQueue.size() - this.workersBusy.length;
+        const doneTargets = this.allTargetCount - this.jobQueue.size() - this.workersBusy;
         const donePercentage = this.allTargetCount === 0
             ? 1 : (doneTargets / this.allTargetCount);
         const donePercStr = (100 * donePercentage).toFixed(2);
@@ -609,7 +612,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
             '0' : (doneTargets * 1000 / timeDiff).toFixed(2);
 
         const workersInfo = this.workers.map((worker, i) => {
-            const isIdle = this.workersAvail.indexOf(worker) !== -1;
+            const isIdle = !worker.busy;
             let workOrIdle;
             let workerUrl = '';
             if (isIdle) {
@@ -628,7 +631,7 @@ export default class Cluster<JobData = any, ReturnData = any> extends EventEmitt
                 url: workerUrl
             }
         });
-        const clusterIsIdle = this.workersBusy.length === 0 && this.jobQueue.size() === 0;
+        const clusterIsIdle = this.workersBusy === 0 && this.jobQueue.size() === 0;
 
         return {
             startTime: util.formatDateTime(this.startTime),

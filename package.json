@@ -1,7 +1,7 @@
 {
-  "name": "playwright-cluster",
+  "name": "patchright-cluster",
   "version": "1.0.6",
-  "description": "Cluster management for playwright",
+  "description": "Cluster management for patchright",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -11,21 +11,21 @@
     "dev": "tsc --watch",
     "publish": "npm publish --access public"
   },
-  "author": "Thomas Dondorf, Christian Nikolov, Andrew Vlasyuk",
+  "author": "Israel Galadima",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cnikolov/playwright-cluster.git"
+    "url": "git+https://github.com/israelsgalaxy/patchright-cluster.git"
   },
-  "homepage": "https://github.com/cnikolov/playwright-cluster",
+  "homepage": "https://github.com/israelsgalaxy/patchright-cluster",
   "keywords": [
-    "playwright",
+    "patchright",
     "cluster",
     "pool"
   ],
   "license": "MIT",
   "dependencies": {
     "debug": "^4.3.3",
-    "playwright": "^1.38.1"
+    "patchright": "^1.52.5"
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",
@@ -34,14 +34,12 @@
     "coveralls": "^3.1.1",
     "express": "^4.17.2",
     "jest": "^27.4.7",
-    "playwright-extra": "^4.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "tree-kill": "^1.2.2",
     "ts-jest": "^27.1.3",
     "typescript": "^4.5.5"
   },
   "bugs": {
-    "url": "https://github.com/cnikolov/playwright-cluster/issues"
+    "url": "https://github.com/israelsgalaxy/patchright-cluster/issues"
   },
   "directories": {
     "example": "examples",

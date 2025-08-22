@@ -1,5 +1,5 @@
 
-import * as playwright from 'playwright';
+import * as playwright from 'patchright';
 
 import { debugGenerator, timeoutExecute } from '../../util';
 import ConcurrencyImplementation, { WorkerInstance } from '../ConcurrencyImplementation';
